@@ -1,0 +1,45 @@
+{
+  "name": "asterisk-ami-client",
+  "version": "0.0.1",
+  "description": "Asterisk AMI Client for NodeJS (ES2015)",
+  "main": "./lib/AmiClient.js",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "test": "mocha ./test",
+    "coverage": "istanbul cover _mocha -- -R spec"
+  },
+  "directories": {
+    "bin": "./bin",
+    "examples": "./examples",
+    "lib": "./lib",
+    "test": "./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git@github.com:BelirafoN/asterisk-ami-client.git"
+  },
+  "keywords": [
+    "voip",
+    "asterisk",
+    "ami"
+  ],
+  "author": {
+    "name": "Alex Voronysnaky",
+    "email": "belirafon@gmail.com"
+  },
+  "dependencies": {
+    "asterisk-ami-connector": "^1.0",
+    "co": "^4.6.0",
+    "debug": "^2.2.0",
+    "yargs": "^4.6.0"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.9",
+    "debug": "^2.2.0",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.4.5"
+  },
+  "license": "MIT"
+}
