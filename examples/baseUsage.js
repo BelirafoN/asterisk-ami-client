@@ -13,7 +13,7 @@ let client = new AmiClient({
     keepAlive: true
 });
 
-client.connect('user', 'secret', {host: 'localhost', port: 5800})
+client.connect('user', 'secret', {host: 'localhost', port: 5038})
     .then(() => {
 
         client

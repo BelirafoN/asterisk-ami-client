@@ -16,7 +16,7 @@ co(function* (){
         keepAlive: true
     });
 
-    yield client.connect('user', 'secret', {host: 'localhost', port: 5800});
+    yield client.connect('user', 'secret', {host: 'localhost', port: 5038});
 
     client
         .on('response', response => {

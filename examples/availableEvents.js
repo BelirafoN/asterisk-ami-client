@@ -9,7 +9,7 @@
 const AmiClient = require('asterisk-ami-client');
 let client = new AmiClient();
 
-client.connect('user', 'secret', {host: 'localhost', port: 5800})
+client.connect('user', 'secret', {host: 'localhost', port: 5038})
     .then(() => {
 
         client

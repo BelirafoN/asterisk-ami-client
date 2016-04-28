@@ -12,7 +12,7 @@ const co = require('co');
 co(function* (){
     let client = new AmiClient();
 
-    yield client.connect('user', 'secret', {host: 'localhost', port: 5800});
+    yield client.connect('user', 'secret', {host: 'localhost', port: 5038});
     client
         .on('connect', () => console.log('connect'))
         .on('event', event => console.log(event))
