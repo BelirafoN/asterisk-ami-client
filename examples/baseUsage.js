@@ -17,6 +17,7 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
     .then(() => {
 
         client
+            .on('event', event => console.log(event))
             .on('response', response => {
                 console.log(response);
                 client.disconnect();

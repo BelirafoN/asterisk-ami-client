@@ -24,7 +24,40 @@ support `>=4.0.0`
 
 It is only some usage cases.
 
-#### Example 1: 
+#### Example 1:
+ 
+Listening all events on instance of client;
+ 
+```javascript
+const AmiClient = require('asterisk-ami-client');
+let client = new AmiClient();
+
+client.connect('user', 'secret', {host: 'localhost', port: 5038})
+ .then(amiConnection => {
+
+     client
+         .on('connect', () => console.log('connect'))
+         .on('event', event => console.log(event))
+         .on('data', chunk => console.log(chunk))
+         .on('response', response => console.log(response))
+         .on('disconnect', () => console.log('disconnect'))
+         .on('reconnection', () => console.log('reconnection'))
+         .on('error', error => console.log(error))
+         .action({
+             Action: 'Ping'
+         });
+
+     setTimeout(() => {
+         client.disconnect();
+     }, 5000);
+
+ })
+ .catch(error => console.log(error));
+```
+ 
+#### Example 2: 
+
+Receive Asterisk's AMI responses with promise-chunk.
 
 ```javascript
 const AmiClient = require('asterisk-ami-client');
@@ -51,7 +84,9 @@ client.connect('username', 'secret', {host: '127.0.0.1', port: 5038})
 ```
 or with `co`-library for sync-style of code 
 
-#### Example 2:
+#### Example 3:
+
+Receive Asterisk's AMI responses with `co`.
 
 ```javascript
 const AmiClient = require('asterisk-ami-client');
@@ -72,7 +107,9 @@ co(function* (){
 }).catch(error => console.log(error));
 ```
 
-#### Example 3:
+#### Example 4:
+
+Listening `event` and `response` events on instance of client. 
 
 ```javascript
 const AmiClient = require('asterisk-ami-client');
@@ -85,6 +122,7 @@ let client = new AmiClient({
 client.connect('user', 'secret', {host: 'localhost', port: 5038})
     .then(() => {
         client
+            .on('event', event => console.log(event))
             .on('response', response => {
                 console.log(response);
                 client.disconnect();
@@ -92,6 +130,42 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
             .on('error', error => console.log(error));
 
         client.action({Action: 'Ping'});
+    })
+    .catch(error => console.log(error));
+```
+
+### Example 5:
+
+Emit events by names and emit of response by `resp_${ActionID}` 
+(if ActionID is set in action's data package).
+
+```javascript
+const AmiClient = require('asterisk-ami-client');
+
+let client = new AmiClient({
+    reconnect: true,
+    keepAlive: true,
+    emitEventsByTypes: true,
+    emitResponsesById: true
+});
+
+client.connect('user', 'secret', {host: 'localhost', port: 5038})
+    .then(() => {
+        client
+            .on('Dial', event => console.log(event))
+            .on('Hangup', event => console.log(event))
+            .on('Hold', event => console.log(event))
+            .on('Bridge', event => console.log(event))
+            .on('resp_123', response => {
+                console.log(response);
+                client.disconnect();
+            })
+            .on('error', error => console.log(error));
+
+        client.action({
+            Action: 'Ping',
+            ActionID: 123
+        });
     })
     .catch(error => console.log(error));
 ```

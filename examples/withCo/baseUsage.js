@@ -19,6 +19,7 @@ co(function* (){
     yield client.connect('user', 'secret', {host: 'localhost', port: 5038});
 
     client
+        .on('event', event => console.log(event))
         .on('response', response => {
             console.log(response);
             client.disconnect();
