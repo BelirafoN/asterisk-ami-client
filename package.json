@@ -1,6 +1,6 @@
 {
   "name": "asterisk-ami-client",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Asterisk AMI Client for NodeJS (ES2015)",
   "main": "./lib/AmiClient.js",
   "engines": {
@@ -11,7 +11,6 @@
     "coverage": "istanbul cover _mocha -- -R spec"
   },
   "directories": {
-    "bin": "./bin",
     "examples": "./examples",
     "lib": "./lib",
     "test": "./test"
@@ -32,12 +31,10 @@
   "dependencies": {
     "asterisk-ami-connector": "^1.0",
     "co": "^4.6.0",
-    "debug": "^2.2.0",
-    "yargs": "^4.6.0"
+    "debug": "^2.2.0"
   },
   "devDependencies": {
     "coveralls": "^2.11.9",
-    "debug": "^2.2.0",
     "istanbul": "^0.4.3",
     "mocha": "^2.4.5"
   },

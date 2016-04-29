@@ -13,6 +13,7 @@ co(function* (){
     let client = new AmiClient();
 
     yield client.connect('user', 'secret', {host: 'localhost', port: 5038});
+
     client
         .on('connect', () => console.log('connect'))
         .on('event', event => console.log(event))
@@ -20,6 +21,11 @@ co(function* (){
         .on('response', response => console.log(response))
         .on('disconnect', () => console.log('disconnect'))
         .on('reconnection', () => console.log('reconnection'))
-        .on('error', error => console.log(error));
+        .on('error', error => console.log(error))
+        .action({
+            Action: 'Ping'
+        });
+
+    client.disconnect();
 })
     .catch(error => console.log(error));
