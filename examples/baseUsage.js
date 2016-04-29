@@ -22,7 +22,7 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
                 console.log(response);
                 client.disconnect();
             })
-            .on('error', error => console.log(error));
+            .on('internalError', error => console.log(error));
 
         client.action({Action: 'Ping'});
 

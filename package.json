@@ -1,6 +1,6 @@
 {
   "name": "asterisk-ami-client",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Asterisk AMI Client for NodeJS (ES2015)",
   "main": "./lib/AmiClient.js",
   "engines": {

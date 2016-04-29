@@ -24,7 +24,7 @@ co(function* (){
             console.log(response);
             client.disconnect();
         })
-        .on('error', error => console.log(error))
+        .on('internalError', error => console.log(error))
         .action({Action: 'Ping'});
 })
     .catch(error => console.log(error));
