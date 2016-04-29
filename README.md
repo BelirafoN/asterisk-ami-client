@@ -3,11 +3,12 @@
 [![Code Climate](https://codeclimate.com/github/BelirafoN/asterisk-ami-client/badges/gpa.svg)](https://codeclimate.com/github/BelirafoN/asterisk-ami-client)
 [![npm version](https://badge.fury.io/js/asterisk-ami-client.svg)](https://badge.fury.io/js/asterisk-ami-client)
 
-Full functionality client for Asterisk's AMI. Support any data packages (action/event/response/custom responses) from AMI;
-With this client you can select you'r own case of programming interactions with Asterisk AMI;
-If you like events & handlers - you can use it! 
-If you like promises - you can use it! 
-If you like `co` & sync-style of code - you can use it!
+Full functionality client for Asterisk's AMI. Support any data packages (action/event/response/custom responses) from AMI; 
+With this client you can select you'r own case of programming interactions with Asterisk AMI.  
+
+If you like events & handlers - you can use it!  
+If you like promises - you can use it!  
+If you like `co` & sync-style of code - you can use it! 
 
 ## Install 
 
