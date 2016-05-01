@@ -199,20 +199,20 @@ Default values:
     eventTypeToLowerCase: false,
     emitResponsesById: true,
     addTime: false,
-    eventFilter: null
+    eventFilter: null  // filter disabled
 }
 ```
 
-`reconnect` - auto reconnection;
-`maxAttemptsCount` - max count of attempts when client tries to reconnect to Asterisk;
-`attemptsDelay` - delay (ms) between attempts of reconnection;
-`keepAlive` - when is `true`, client send `Action: Ping` to Asterisk automatic every minute;
-`keepAliveDelay` - delay (ms) between keep-alive actions, when parameter `keepAlive` was set to `true`;
-`emitEventsByTypes` - when is `true`, client will emit events by names. See example 5;
-`eventTypeToLowerCase` - when is `true`, client will emit events by names in lower case. Uses with `emitEventsByTypes`;
-`emitResponsesById` - when is `true` and data package of action has ActionID field, client will emit responses by `resp_ActionID`. See example 5;
-`addTime` - when is `true`, client will be add into events and responses field `$time` with value equal to ms-timestamp;
-`eventFilter` - object, array or Set with names of events, which will be ignored by client.
+* `reconnect` - auto reconnection;
+* `maxAttemptsCount` - max count of attempts when client tries to reconnect to Asterisk;
+* `attemptsDelay` - delay (ms) between attempts of reconnection;
+* `keepAlive` - when is `true`, client send `Action: Ping` to Asterisk automatic every minute;
+* `keepAliveDelay` - delay (ms) between keep-alive actions, when parameter `keepAlive` was set to `true`;
+* `emitEventsByTypes` - when is `true`, client will emit events by names. See example 5;
+* `eventTypeToLowerCase` - when is `true`, client will emit events by names in lower case. Uses with `emitEventsByTypes`;
+* `emitResponsesById` - when is `true` and data package of action has ActionID field, client will emit responses by `resp_ActionID`. See example 5;
+* `addTime` - when is `true`, client will be add into events and responses field `$time` with value equal to ms-timestamp;
+* `eventFilter` - object, array or Set with names of events, which will be ignored by client. 
 
 ## More examples
 
