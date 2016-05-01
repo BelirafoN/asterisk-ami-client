@@ -172,16 +172,28 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
 
 ## Docs & internal details
 
-comming soon
+### Events 
+
+* `connect` - emits when client was connected;
+* `event` - emits when was received a new event of Asterisk;
+* `data` - emits when was received a new chunk of data form the Asterisk's socket;
+* `response` -  emits when was received a new response of Asterisk;
+* `disconnect` -  emits when client was disconnected;
+* `reconnection` -  emits when client tries reconnect to Asterisk;
+* `internalError` - emit when happens something very bad. Like a disconnection from Asterisk and etc;
+* `${eventName}` - emits when was received event with name `eventName` of Asterisk and parameter `emitEventsByTypes` was set to `true`. See example 5.;
+* `${resp__ActionID}` - emits when was received response with `ActionID` of Asterisk and parameter `emitResponsesById` was set to `true`. See example 5.
+
+continue comming soon
 
 ## More examples
 
 For more examples, please, see `./examples/*`. 
 
-### Tests 
+## Tests 
 
 comming soon
 
-### License 
+## License 
 
 Licensed under the MIT License
