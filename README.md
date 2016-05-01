@@ -182,9 +182,37 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
 * `reconnection` -  emits when client tries reconnect to Asterisk;
 * `internalError` - emit when happens something very bad. Like a disconnection from Asterisk and etc;
 * `${eventName}` - emits when was received event with name `eventName` of Asterisk and parameter `emitEventsByTypes` was set to `true`. See example 5.;
-* `${resp__ActionID}` - emits when was received response with `ActionID` of Asterisk and parameter `emitResponsesById` was set to `true`. See example 5.
+* `${resp_ActionID}` - emits when was received response with `ActionID` of Asterisk and parameter `emitResponsesById` was set to `true`. See example 5.
 
-continue comming soon
+### Clint's parameters 
+
+Default values: 
+
+```javascript
+{
+    reconnect: false,
+    maxAttemptsCount: 30,
+    attemptsDelay: 1000,
+    keepAlive: false,
+    keepAliveDelay: 1000,
+    emitEventsByTypes: true,
+    eventTypeToLowerCase: false,
+    emitResponsesById: true,
+    addTime: false,
+    eventFilter: null
+}
+```
+
+`reconnect` - auto reconnection;
+`maxAttemptsCount` - max count of attempts when client tries to reconnect to Asterisk;
+`attemptsDelay` - delay (ms) between attempts of reconnection;
+`keepAlive` - when is `true`, client send `Action: Ping` to Asterisk automatic every minute;
+`keepAliveDelay` - delay (ms) between keep-alive actions, when parameter `keepAlive` was set to `true`;
+`emitEventsByTypes` - when is `true`, client will emit events by names. See example 5;
+`eventTypeToLowerCase` - when is `true`, client will emit events by names in lower case. Uses with `emitEventsByTypes`;
+`emitResponsesById` - when is `true` and data package of action has ActionID field, client will emit responses by `resp_ActionID`. See example 5;
+`addTime` - when is `true`, client will be add into events and responses field `$time` with value equal to ms-timestamp;
+`eventFilter` - object, array or Set with names of events, which will be ignored by client.
 
 ## More examples
 
