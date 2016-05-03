@@ -10,20 +10,21 @@ If you like events & handlers - you can use it!
 If you like promises - you can use it!  
 If you like `co` & sync-style of code - you can use it! 
 
-1. Usage
+1. [Install](#install)
+2. [Usage](#usage)
     * [Example 1](example-1)
     * [Example 2](example-2)
     * [Example 3](example-3)
     * [Example 4](example-4)
     * [Example 5](example-5)
-2. More examples
-3. Docs & internal details
+3. [More examples](#more-examples)
+4. [Docs & internal details](#docs--internal-details)
     * [Events](#events)
     * [Client's parameters](#clints-parameters)
     * [Methods](#methods)
     * [Properties](#properties) 
-4. [Tests](#tests)
-5. [License](#license)
+5. [Tests](#tests)
+6. [License](#license)
 
 ## Install 
 
