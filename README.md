@@ -181,8 +181,8 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
 * `disconnect` -  emits when client was disconnected;
 * `reconnection` -  emits when client tries reconnect to Asterisk;
 * `internalError` - emit when happens something very bad. Like a disconnection from Asterisk and etc;
-* `${eventName}` - emits when was received event with name `eventName` of Asterisk and parameter `emitEventsByTypes` was set to `true`. See example 5.;
-* `${resp_ActionID}` - emits when was received response with `ActionID` of Asterisk and parameter `emitResponsesById` was set to `true`. See example 5.
+* `${eventName}` - emits when was received event with name `eventName` of Asterisk and parameter `emitEventsByTypes` was set to `true`. [See example 5](#example-5);
+* `${resp_ActionID}` - emits when was received response with `ActionID` of Asterisk and parameter `emitResponsesById` was set to `true`. [See example 5](#example-5).
 
 ### Clint's parameters 
 
@@ -208,11 +208,31 @@ Default values:
 * `attemptsDelay` - delay (ms) between attempts of reconnection;
 * `keepAlive` - when is `true`, client send `Action: Ping` to Asterisk automatic every minute;
 * `keepAliveDelay` - delay (ms) between keep-alive actions, when parameter `keepAlive` was set to `true`;
-* `emitEventsByTypes` - when is `true`, client will emit events by names. See example 5;
+* `emitEventsByTypes` - when is `true`, client will emit events by names. See [example 5](#example-5);
 * `eventTypeToLowerCase` - when is `true`, client will emit events by names in lower case. Uses with `emitEventsByTypes`;
-* `emitResponsesById` - when is `true` and data package of action has ActionID field, client will emit responses by `resp_ActionID`. See example 5;
+* `emitResponsesById` - when is `true` and data package of action has ActionID field, client will emit responses by `resp_ActionID`. See [example 5](#example-5);
 * `addTime` - when is `true`, client will be add into events and responses field `$time` with value equal to ms-timestamp;
 * `eventFilter` - object, array or Set with names of events, which will be ignored by client. 
+
+### Methods 
+
+* `.connect(username, secret[, options])` - connect to Asterisk. See [examples](#usage);
+*  `.disconnect()` - disconnect from Asterisk;
+*  `.action(message)` - send new action to Asterisk;
+*  `.write(message)` - alias of `action` method;
+*  `.send(message)` - alias of `action` method;
+*  `.option(name[, value])` - get or set option of client;
+*  `.options([newOptions])` - get or set all options of client.
+
+### Properties
+ 
+Getters
+
+* `lastEvent` - last event, which was receive from Asterisk;
+* `lastResponse` - last response which was receive from Asterisk; 
+* `isConnected` - status of current connection to Asterisk;
+* `lastAction` -  last action data which was transmitted to Asterisk;
+* `connection` - get current amiConnection.
 
 ## More examples
 
