@@ -10,6 +10,21 @@ If you like events & handlers - you can use it!
 If you like promises - you can use it!  
 If you like `co` & sync-style of code - you can use it! 
 
+1. Usage
+    * [Example 1](example-1)
+    * [Example 2](example-2)
+    * [Example 3](example-3)
+    * [Example 4](example-4)
+    * [Example 5](example-5)
+2. More examples
+3. Docs & internal details
+    * [Events](#events)
+    * [Client's parameters](#clints-parameters)
+    * [Methods](#methods)
+    * [Properties](#properties) 
+4. [Tests](#tests)
+5. [License](#license)
+
 ## Install 
 
 ```bash
@@ -170,6 +185,10 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
     .catch(error => console.log(error));
 ```
 
+## More examples
+
+For more examples, please, see `./examples/*`. 
+
 ## Docs & internal details
 
 ### Events 
@@ -184,7 +203,7 @@ client.connect('user', 'secret', {host: 'localhost', port: 5038})
 * `${eventName}` - emits when was received event with name `eventName` of Asterisk and parameter `emitEventsByTypes` was set to `true`. [See example 5](#example-5);
 * `${resp_ActionID}` - emits when was received response with `ActionID` of Asterisk and parameter `emitResponsesById` was set to `true`. [See example 5](#example-5).
 
-### Clint's parameters 
+### Client's parameters 
 
 Default values: 
 
@@ -233,10 +252,6 @@ Getters
 * `isConnected` - status of current connection to Asterisk;
 * `lastAction` -  last action data which was transmitted to Asterisk;
 * `connection` - get current amiConnection.
-
-## More examples
-
-For more examples, please, see `./examples/*`. 
 
 ## Tests 
 
