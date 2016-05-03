@@ -16,7 +16,7 @@ If you like `co` & sync-style of code - you can use it!
     * [Example 2](#example-2)
     * [Example 3](#example-3)
     * [Example 4](#example-4)
-    * [Example 5](#xample-5)
+    * [Example 5](#example-5)
 3. [More examples](#more-examples)
 4. [Docs & internal details](#docs--internal-details)
     * [Events](#events)
