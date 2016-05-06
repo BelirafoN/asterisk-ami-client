@@ -1,5 +1,6 @@
 # Asterisk AMI Client for NodeJS (ES2015)
 
+[![Build Status](https://travis-ci.org/BelirafoN/asterisk-ami-client.svg?branch=master)](https://travis-ci.org/BelirafoN/asterisk-ami-client)
 [![Code Climate](https://codeclimate.com/github/BelirafoN/asterisk-ami-client/badges/gpa.svg)](https://codeclimate.com/github/BelirafoN/asterisk-ami-client)
 [![npm version](https://badge.fury.io/js/asterisk-ami-client.svg)](https://badge.fury.io/js/asterisk-ami-client)
 
