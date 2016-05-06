@@ -23,7 +23,7 @@ let serverOptions = {
     };
 
 describe('Ami Client internal functionality', function(){
-    this.timeout(5000);
+    this.timeout(3000);
 
     let server = null,
         client = null;
@@ -124,12 +124,9 @@ describe('Ami Client internal functionality', function(){
                 assert.equal('connect ECONNREFUSED 127.0.0.1:5038', error.message);
                 done();
             });
-            setTimeout(() => {
-                server.listen({port: socketOptions.port});
-            }, 1500);
         });
 
-        /*it('Reconnection after disconnect from Asterisk', done => {
+        it('Reconnection after disconnect from Asterisk', done => {
             let wasDisconnect = false,
                 connectCounter = 0;
 
@@ -143,20 +140,20 @@ describe('Ami Client internal functionality', function(){
                     wasDisconnect = true;
                 })
                 .on('connect', () => {
-                    assert.ok(wasDisconnect);
-                    assert.equal(connectCounter, 2);
-                    done();
+                    if(++connectCounter == 2 && wasDisconnect){
+                        done();
+                    }
                 });
 
             server.listen({port: socketOptions.port}).then(() => {
                 client.connect('test', 'test', socketOptions).then(() => {
                     server.close();
                     setTimeout(() => {
-                        server.listen({port: socketOptions.port}).then(() => {});
+                        server.listen({port: socketOptions.port}).catch(error => console.log(error));
                     }, 1000);
-                });
-            });
-        });*/
+                }).catch(error => console.log(error));
+            }).catch(error => console.log(error));
+        });
     });
 
 });
