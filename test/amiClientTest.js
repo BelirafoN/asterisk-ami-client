@@ -6,6 +6,7 @@
 
 "use strict";
 
+const amiUtils = require('asterisk-ami-event-utils');
 const AmiTestServer = require('asterisk-ami-test-server');
 const AmiClient = require('../lib/AmiClient');
 const AmiConnection = require('../node_modules/asterisk-ami-connector/lib/AmiConnection');
@@ -154,6 +155,51 @@ describe('Ami Client internal functionality', function(){
                 }).catch(error => console.log(error));
             }).catch(error => console.log(error));
         });
+    });
+
+    describe('Last event/response/action', function(){
+
+        beforeEach(done => {
+            client = new AmiClient();
+            server = new AmiTestServer(serverOptions);
+            server.listen({port: socketOptions.port}).then(done);
+        });
+
+        it('Get last Event', done => {
+            let testEvent = {
+                Event: 'TestEvent',
+                Value: 'TestValue'
+            };
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                server.broadcast(amiUtils.fromObject(testEvent));
+                client.once('event', event => {
+                    assert.deepEqual(event, client.lastEvent);
+                    done();
+                });
+            });
+        });
+
+        it('Get last Response', done => {
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                client.action({Action: 'Ping'});
+                client.once('response', response => {
+                    assert.equal(response.Response, 'Success');
+                    assert.equal(response.Ping, 'Pong');
+                    assert.ok(/\d10\.\d{6}/.test(response.Timestamp));
+                    done();
+                });
+            });
+        });
+
+        it('Get last Action', done => {
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                let testAction = {Action: 'Ping'};
+                client.action(testAction);
+                assert.deepEqual(testAction, client.lastAction);
+                done();
+            });
+        });
+
     });
 
 });
