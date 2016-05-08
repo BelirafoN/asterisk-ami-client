@@ -150,10 +150,10 @@ describe('Ami Client internal functionality', function(){
                 client.connect('test', 'test', socketOptions).then(() => {
                     server.close();
                     setTimeout(() => {
-                        server.listen({port: socketOptions.port}).catch(error => console.log(error));
+                        server.listen({port: socketOptions.port});
                     }, 1000);
-                }).catch(error => console.log(error));
-            }).catch(error => console.log(error));
+                });
+            });
         });
     });
 
@@ -199,6 +199,105 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
         });
+
+    });
+
+    describe('Client\'s events', function(){
+
+        beforeEach(done => {
+            client = new AmiClient();
+            server = new AmiTestServer(serverOptions);
+            server.listen({port: socketOptions.port}).then(done);
+        });
+
+        it('Connect event', done => {
+            client.on('connect', () => done());
+            client.connect('test', 'test', {port: socketOptions.port});
+        });
+
+        it('Disconnect event', done => {
+            client.on('disconnect', () => done());
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                server.close();
+            });
+        });
+
+        it('Reconnect event', done => {
+            client = new AmiClient({reconnect: true});
+            client.on('reconnection', () => done());
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                server.close();
+            });
+        });
+
+        it('Event event', done => {
+            let testEvent = {
+                Event: 'TestEvent'
+            };
+
+            client.on('event', event => {
+                assert.deepEqual(event, testEvent);
+                done();
+            });
+
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                server.broadcast(amiUtils.fromObject(testEvent));
+            });
+        });
+
+        it('Event by event\'s type', done => {
+            let testEvent = {
+                Event: 'TestEvent'
+            };
+
+            client.on('TestEvent', event => {
+                assert.deepEqual(event, testEvent);
+                done();
+            });
+
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                server.broadcast(amiUtils.fromObject(testEvent));
+            });
+        });
+
+        it('Response event', done => {
+            client.on('response', response => {
+                assert(response.Response, 'Success');
+                assert(response.Ping, 'Pong');
+                done();
+            });
+
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                client.action({Action: 'Ping'});
+            });
+        });
+
+        it('Response event by ActionID', done => {
+            client.on('resp_1234567', response => {
+                assert(response.Response, 'Success');
+                assert(response.Ping, 'Pong');
+                done();
+            });
+
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                client.action({
+                    Action: 'Ping',
+                    ActionID: '1234567'
+                });
+            });
+        });
+
+        /*it('Data event', done => {
+            let testChunk = amiUtils.toString('test chunk');
+            client.on('data', chunk => {
+                assert.equal(chunk.toString(), testChunk);
+                done();
+            });
+
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                server.broadcast(testChunk);
+            });
+        });*/
 
     });
 
