@@ -185,7 +185,6 @@ describe('Ami Client internal functionality', function(){
                 client.once('response', response => {
                     assert.equal(response.Response, 'Success');
                     assert.equal(response.Ping, 'Pong');
-                    assert.ok(/\d{10}\.\d{6}/.test(response.Timestamp));
                     done();
                 });
             });
@@ -205,7 +204,7 @@ describe('Ami Client internal functionality', function(){
     describe('Client\'s events', function(){
 
         beforeEach(done => {
-            client = new AmiClient();
+            client = new AmiClient({});
             server = new AmiTestServer(serverOptions);
             server.listen({port: socketOptions.port}).then(done);
         });
@@ -216,9 +215,12 @@ describe('Ami Client internal functionality', function(){
         });
 
         it('Disconnect event', done => {
-            client.on('disconnect', () => done());
+            client.once('disconnect', () => {
+                console.log(1);
+                done();
+            });
             client.connect('test', 'test', {port: socketOptions.port}).then(() => {
-                server.close();
+                setTimeout(server.close.bind(server), 100);
             });
         });
 
