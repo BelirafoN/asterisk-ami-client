@@ -185,7 +185,7 @@ describe('Ami Client internal functionality', function(){
                 client.once('response', response => {
                     assert.equal(response.Response, 'Success');
                     assert.equal(response.Ping, 'Pong');
-                    assert.ok(/\d10\.\d{6}/.test(response.Timestamp));
+                    assert.ok(/\d{10}\.\d{6}/.test(response.Timestamp));
                     done();
                 });
             });
