@@ -289,9 +289,9 @@ describe('Ami Client internal functionality', function(){
             });
         });
 
-        /*it('Data event', done => {
-            let testChunk = amiUtils.toString('test chunk');
-            client.on('data', chunk => {
+        it('Data event', done => {
+            let testChunk = amiUtils.fromString('test chunk');
+            client.once('data', chunk => {
                 assert.equal(chunk.toString(), testChunk);
                 done();
             });
@@ -299,7 +299,7 @@ describe('Ami Client internal functionality', function(){
             client.connect('test', 'test', {port: socketOptions.port}).then(() => {
                 server.broadcast(testChunk);
             });
-        });*/
+        });
 
     });
 
