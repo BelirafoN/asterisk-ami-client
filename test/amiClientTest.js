@@ -12,10 +12,13 @@ const AmiClient = require('../lib/AmiClient');
 const AmiConnection = require('../node_modules/asterisk-ami-connector/lib/AmiConnection');
 const assert = require('assert');
 
+const USERNAME = 'test';
+const SECRET = 'test';
+
 let serverOptions = {
         credentials: {
-            username: 'test',
-            secret: 'test'
+            username: USERNAME,
+            secret: SECRET
         }
     },
     socketOptions = {
@@ -25,7 +28,7 @@ let serverOptions = {
 
 describe('Ami Client internal functionality', function(){
     this.timeout(3000);
-
+    
     let server = null,
         client = null;
 
@@ -51,11 +54,11 @@ describe('Ami Client internal functionality', function(){
         });
 
         it('Connect with correct credentials', done => {
-            client.connect('test', 'test', socketOptions).then(() => done());
+            client.connect(USERNAME, SECRET, socketOptions).then(() => done());
         });
 
         it('Connector returns instance of AmiConnection', done => {
-            client.connect('test', 'test', socketOptions).then(amiConnection => {
+            client.connect(USERNAME, SECRET, socketOptions).then(amiConnection => {
                 assert.ok(amiConnection instanceof AmiConnection);
                 done();
             });
@@ -81,7 +84,7 @@ describe('Ami Client internal functionality', function(){
             client = new AmiClient({
                 reconnect: true
             });
-            client.connect('test', 'test', socketOptions).then(() => done());
+            client.connect(USERNAME, SECRET, socketOptions).then(() => done());
             setTimeout(() => {
                 server.listen({port: socketOptions.port});
             }, 1500);
@@ -106,7 +109,7 @@ describe('Ami Client internal functionality', function(){
                 reconnect: true,
                 maxAttemptsCount: 1
             });
-            client.connect('test', 'test', socketOptions).catch(error => {
+            client.connect(USERNAME, SECRET, socketOptions).catch(error => {
                 assert.ok(error instanceof Error);
                 assert.equal('reconnection error after max count attempts.', error.message.toLowerCase());
                 done();
@@ -120,7 +123,7 @@ describe('Ami Client internal functionality', function(){
             client = new AmiClient({
                 reconnect: false
             });
-            client.connect('test', 'test', socketOptions).catch(error => {
+            client.connect(USERNAME, SECRET, socketOptions).catch(error => {
                 assert.ok(error instanceof Error);
                 assert.equal('connect ECONNREFUSED 127.0.0.1:5038', error.message);
                 done();
@@ -147,7 +150,7 @@ describe('Ami Client internal functionality', function(){
                 });
 
             server.listen({port: socketOptions.port}).then(() => {
-                client.connect('test', 'test', socketOptions).then(() => {
+                client.connect(USERNAME, SECRET, socketOptions).then(() => {
                     server.close();
                     setTimeout(() => {
                         server.listen({port: socketOptions.port});
@@ -165,12 +168,12 @@ describe('Ami Client internal functionality', function(){
             server.listen({port: socketOptions.port}).then(done);
         });
 
-        it('Get last Event', done => {
+        it('Get last Event after event', done => {
             let testEvent = {
                 Event: 'TestEvent',
                 Value: 'TestValue'
             };
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 server.broadcast(amiUtils.fromObject(testEvent));
                 client.once('event', event => {
                     assert.deepEqual(event, client.lastEvent);
@@ -179,8 +182,15 @@ describe('Ami Client internal functionality', function(){
             });
         });
 
-        it('Get last Response', done => {
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+        it('Get last Event before event', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                assert.equal(null, client.lastEvent);
+                done();
+            });
+        });
+
+        it('Get last Response after action', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 client.action({Action: 'Ping'});
                 client.once('response', response => {
                     assert.equal(response.Response, 'Success');
@@ -190,11 +200,25 @@ describe('Ami Client internal functionality', function(){
             });
         });
 
-        it('Get last Action', done => {
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+        it('Get last Response before action', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                assert.equal(null, client.lastResponse);
+                done();
+            });
+        });
+
+        it('Get last Action after action', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 let testAction = {Action: 'Ping'};
                 client.action(testAction);
                 assert.deepEqual(testAction, client.lastAction);
+                done();
+            });
+        });
+
+        it('Get last Action before action', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                assert.equal(null, client.lastAction);
                 done();
             });
         });
@@ -211,12 +235,12 @@ describe('Ami Client internal functionality', function(){
 
         it('Connect event', done => {
             client.on('connect', () => done());
-            client.connect('test', 'test', {port: socketOptions.port});
+            client.connect(USERNAME, SECRET, {port: socketOptions.port});
         });
 
         it('Disconnect event', done => {
             client.once('disconnect', done);
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 setTimeout(server.close.bind(server), 100);
             });
         });
@@ -224,7 +248,7 @@ describe('Ami Client internal functionality', function(){
         it('Reconnect event', done => {
             client = new AmiClient({reconnect: true});
             client.once('reconnection', () => done());
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 server.close();
             });
         });
@@ -239,7 +263,7 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
 
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 server.broadcast(amiUtils.fromObject(testEvent));
             });
         });
@@ -254,7 +278,7 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
 
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 server.broadcast(amiUtils.fromObject(testEvent));
             });
         });
@@ -266,7 +290,7 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
 
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 client.action({Action: 'Ping'});
             });
         });
@@ -278,7 +302,7 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
 
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 client.action({
                     Action: 'Ping',
                     ActionID: '1234567'
@@ -293,7 +317,7 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
 
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 server.broadcast(testChunk);
             });
         });
@@ -341,7 +365,7 @@ describe('Ami Client internal functionality', function(){
         });
 
         it('Action is promissable', done => {
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 assert.ok(client.action({Action: 'Ping'}, true) instanceof Promise);
                 done();
             });
@@ -353,7 +377,7 @@ describe('Ami Client internal functionality', function(){
                 ActionID: '1234567'
             };
 
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 client.action(action, true).then( response => {
                     delete response.Timestamp;
                     assert.deepEqual({
@@ -367,7 +391,7 @@ describe('Ami Client internal functionality', function(){
         });
 
         it('Resolving promissabled action without ActionID', done => {
-            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 client.action({Action: 'Ping'}, true).then( response => {
                     delete response.Timestamp;
                     assert.deepEqual({
