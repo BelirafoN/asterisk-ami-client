@@ -215,10 +215,7 @@ describe('Ami Client internal functionality', function(){
         });
 
         it('Disconnect event', done => {
-            client.once('disconnect', () => {
-                console.log(1);
-                done();
-            });
+            client.once('disconnect', done);
             client.connect('test', 'test', {port: socketOptions.port}).then(() => {
                 setTimeout(server.close.bind(server), 100);
             });
@@ -226,7 +223,7 @@ describe('Ami Client internal functionality', function(){
 
         it('Reconnect event', done => {
             client = new AmiClient({reconnect: true});
-            client.on('reconnection', () => done());
+            client.once('reconnection', () => done());
             client.connect('test', 'test', {port: socketOptions.port}).then(() => {
                 server.close();
             });
@@ -298,6 +295,87 @@ describe('Ami Client internal functionality', function(){
 
             client.connect('test', 'test', {port: socketOptions.port}).then(() => {
                 server.broadcast(testChunk);
+            });
+        });
+
+    });
+
+    describe('Action-method and aliases', function(){
+
+        beforeEach(done => {
+            client = new AmiClient({});
+            server = new AmiTestServer(serverOptions);
+            server.listen({port: socketOptions.port}).then(done);
+        });
+
+        it('Call action before connection => exception', () => {
+            assert.throws(() => {
+                client.action({Action: 'Ping'});
+            }, error => {
+                assert.ok(error instanceof Error);
+                assert.equal(`Call 'connect' method before.`, error.message);
+                return true;
+            });
+        });
+
+        it('Write is a alias of action', done => {
+            let action = client.action,
+                testAction = {Action: 'Ping'};
+
+            client.action = function(message){
+                assert.deepEqual(testAction, message);
+                done();
+            };
+            client.write(testAction);
+        });
+
+        it('Send is a alias of action', done => {
+            let action = client.action,
+                testAction = {Action: 'Ping'};
+
+            client.action = function(message){
+                assert.deepEqual(testAction, message);
+                done();
+            };
+            client.send(testAction);
+        });
+
+        it('Action is promissable', done => {
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                assert.ok(client.action({Action: 'Ping'}, true) instanceof Promise);
+                done();
+            });
+        });
+
+        it('Resolving promissabled action with ActionID', done => {
+            let action = {
+                Action: 'Ping',
+                ActionID: '1234567'
+            };
+
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                client.action(action, true).then( response => {
+                    delete response.Timestamp;
+                    assert.deepEqual({
+                        Response: 'Success',
+                        Ping: 'Pong',
+                        ActionID: action.ActionID
+                    }, response);
+                    done();
+                });
+            });
+        });
+
+        it('Resolving promissabled action without ActionID', done => {
+            client.connect('test', 'test', {port: socketOptions.port}).then(() => {
+                client.action({Action: 'Ping'}, true).then( response => {
+                    delete response.Timestamp;
+                    assert.deepEqual({
+                        Response: 'Success',
+                        Ping: 'Pong'
+                    }, response);
+                    done();
+                });
             });
         });
 
