@@ -405,5 +405,96 @@ describe('Ami Client internal functionality', function(){
 
     });
 
+    describe('Client\'s configuration', function(){
+
+        beforeEach(() => {
+            client = new AmiClient({});
+        });
+
+        it('Get all options of client', () => {
+            assert.deepEqual(client.options(), {
+                reconnect: false,
+                maxAttemptsCount: 30,
+                attemptsDelay: 1000,
+                keepAlive: false,
+                keepAliveDelay: 1000,
+                emitEventsByTypes: true,
+                eventTypeToLowerCase: false,
+                emitResponsesById: true,
+                addTime: false,
+                eventFilter: null
+            })
+        });
+
+        it('Set all options of client', () => {
+            let newOptions = {
+                reconnect: true,
+                maxAttemptsCount: 5,
+                attemptsDelay: 5000,
+                keepAlive: true,
+                keepAliveDelay: 5000,
+                emitEventsByTypes: false,
+                eventTypeToLowerCase: true,
+                emitResponsesById: false,
+                addTime: true,
+                eventFilter: new Set(['Dial'])
+            };
+
+            client.options(Object.assign({}, newOptions, {undefinedOption: 'testValue'}));
+            assert.deepEqual(client.options(), newOptions)
+        });
+
+        it('Get value of exists option', () => {
+            assert.equal(client.option('maxAttemptsCount'), 30)
+        });
+
+        it('Get value of not exists option', () => {
+            assert.equal(client.option('notExistsOption'), undefined)
+        });
+
+        it('Set value for exists option', () => {
+            let optionName = 'maxAttemptsCount',
+                result = client.option(optionName, 1);
+            assert.equal(client.option(optionName), 1);
+            assert.equal(result, true);
+        });
+
+        it('Set value for not exists option', () => {
+            let result = client.option('notExistsOption', 1);
+            assert.equal(result, false);
+        });
+
+        it('Set event filter from array', () => {
+            let eventNames = ['Dial', 'Hangup', 'Dial'];
+            client.option('eventFilter', eventNames);
+            assert.ok(client.option('eventFilter') instanceof Set);
+            assert.deepEqual(
+                Array.from(client.option('eventFilter')),
+                Array.from(new Set(eventNames)).map(name => name.toLowerCase())
+            );
+        });
+
+        it('Set event filter from object', () => {
+            let eventNames = {
+                Dial: 1,
+                Hangup: 1
+            };
+            client.option('eventFilter', eventNames);
+            console.log(typeof client.option('eventFilter'));
+            assert.ok(client.option('eventFilter') instanceof Set);
+            assert.deepEqual(
+                Array.from(client.option('eventFilter')),
+                Object.keys(eventNames).map(name => name.toLowerCase())
+            );
+        });
+
+        it('Set event filter from Set', () => {
+            let eventNames = new Set(['Dial', 'Hangup', 'Dial']);
+            client.option('eventFilter', eventNames);
+            assert.deepEqual(client.option('eventFilter'), eventNames);
+        });
+
+    });
+
 });
 
