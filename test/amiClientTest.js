@@ -207,9 +207,21 @@ describe('Ami Client internal functionality', function(){
             });
         });
 
-        it('Get last Action after action', done => {
+        it('Get last Action after action (without ActionID)', done => {
             client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 let testAction = {Action: 'Ping'};
+                client.action(testAction);
+                assert.deepEqual(testAction, client.lastAction);
+                done();
+            });
+        });
+
+        it('Get last Action after action (with ActionID)', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                let testAction = {
+                    Action: 'Ping',
+                    ActionID: '1234567'
+                };
                 client.action(testAction);
                 assert.deepEqual(testAction, client.lastAction);
                 done();
@@ -504,25 +516,104 @@ describe('Ami Client internal functionality', function(){
             server.listen({port: socketOptions.port}).then(done);
         });
 
-        it('Get AmiConnection before connect', () => {
+        it('State of AmiConnection before connect is "disconnected"', () => {
             assert.equal(client.connection, null);
         });
 
-        it('Get AmiConnection after connect', done => {
+        it('State of AmiConnection after connect is "connected"', done => {
             client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 assert.ok(client.connection instanceof AmiConnection);
                 done();
             });
         });
 
-        it('State of connection before connect', () => {
+        it('State of connection before connect is "disconnected"', () => {
             assert.ok(!client.isConnected);
         });
 
-        it('State of connection after connect', done => {
+        it('State of connection after connect is "connected"', done => {
             client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 assert.ok(client.isConnected);
                 done();
+            });
+        });
+
+        it('State of connection after disconnect is "disconnected"', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                server.close();
+                setTimeout(() => {
+                    assert.ok(!client.isConnected);
+                    done();
+                }, 100);
+            });
+        });
+
+    });
+
+    describe('Event filtering', function(){
+
+        beforeEach(done => {
+            client = new AmiClient({});
+            server = new AmiTestServer(serverOptions);
+            server.listen({port: socketOptions.port}).then(done);
+        });
+
+        it('Filter is disabled', done => {
+            let srcEvents = [
+                    {Event: 'Test1', Value: 'TestValue1'},
+                    {Event: 'Test2', Value: 'TestValue2'}
+                ],
+                controlEvents = [];
+
+            assert.equal(null, client.option('eventFilter'));
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client
+                    .on('event', event => {
+                        controlEvents.push(event);
+                    })
+                    .on('response', () => {
+                        assert.deepEqual(controlEvents, [
+                            {Event: 'Test1', Value: 'TestValue1'},
+                            {Event: 'Test2', Value: 'TestValue2'}
+                        ]);
+                        done();
+                    });
+
+                srcEvents.forEach(event => {
+                    server.broadcast(amiUtils.fromObject(event));
+                });
+                server.broadcast(amiUtils.fromObject({
+                    Response: 'Success'
+                }));
+            });
+        });
+
+        it('Filter is enabled', done => {
+            let srcEvents = [
+                    {Event: 'Test1', Value: 'TestValue1'},
+                    {Event: 'Test2', Value: 'TestValue2'}
+                ],
+                controlEvents = [];
+
+            client.option('eventFilter', ['Test1']);
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client
+                    .on('event', event => {
+                        controlEvents.push(event);
+                    })
+                    .on('response', () => {
+                        assert.deepEqual(controlEvents, [
+                            {Event: 'Test2', Value: 'TestValue2'}
+                        ]);
+                        done();
+                    });
+
+                srcEvents.forEach(event => {
+                    server.broadcast(amiUtils.fromObject(event));
+                });
+                server.broadcast(amiUtils.fromObject({
+                    Response: 'Success'
+                }));
             });
         });
 
