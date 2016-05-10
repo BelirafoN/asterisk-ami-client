@@ -650,9 +650,8 @@ describe('Ami Client internal functionality', function(){
             client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 let clientEventsStream = server.getAuthClients()[0]._eventStream;
                 clientEventsStream.on('amiAction', action => {
-                    console.log(action);
                     if(action.Action === 'Ping'){
-                        assert.ok(action.ActionID.startsWith('--spec_'));
+                        assert.ok(action.ActionID.startsWith(client._specPrefix));
                         clientEventsStream.removeAllListeners('amiAction');
                         done();
                     }
