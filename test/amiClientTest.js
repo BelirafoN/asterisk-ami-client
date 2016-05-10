@@ -496,5 +496,37 @@ describe('Ami Client internal functionality', function(){
 
     });
 
+    describe('Connection state', function(){
+
+        beforeEach(done => {
+            client = new AmiClient({});
+            server = new AmiTestServer(serverOptions);
+            server.listen({port: socketOptions.port}).then(done);
+        });
+
+        it('Get AmiConnection before connect', () => {
+            assert.equal(client.connection, null);
+        });
+
+        it('Get AmiConnection after connect', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                assert.ok(client.connection instanceof AmiConnection);
+                done();
+            });
+        });
+
+        it('State of connection before connect', () => {
+            assert.ok(!client.isConnected);
+        });
+
+        it('State of connection after connect', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                assert.ok(client.isConnected);
+                done();
+            });
+        });
+
+    });
+
 });
 
