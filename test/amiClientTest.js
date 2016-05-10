@@ -492,7 +492,6 @@ describe('Ami Client internal functionality', function(){
                 Hangup: 1
             };
             client.option('eventFilter', eventNames);
-            console.log(typeof client.option('eventFilter'));
             assert.ok(client.option('eventFilter') instanceof Set);
             assert.deepEqual(
                 Array.from(client.option('eventFilter')),
@@ -614,6 +613,50 @@ describe('Ami Client internal functionality', function(){
                 server.broadcast(amiUtils.fromObject({
                     Response: 'Success'
                 }));
+            });
+        });
+
+    });
+
+    describe('Keep-alive', function(){
+
+        beforeEach(done => {
+            client = new AmiClient({});
+            server = new AmiTestServer(serverOptions);
+            server.listen({port: socketOptions.port}).then(done);
+        });
+
+        it('keep-alive is disabled', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                let clientEventsStream = server.getAuthClients()[0]._eventStream,
+                    timeout = setTimeout(() => {
+                        clientEventsStream.removeAllListeners('amiAction');
+                        done();
+                    }, 2000);
+
+                clientEventsStream.on('amiAction', action => {
+                    if(action.Action === 'Ping'){
+                        clearTimeout(timeout);
+                    }
+                });
+            });
+        });
+
+        it('keep-alive is enabled', done => {
+            client = new AmiClient({
+                keepAlive: true,
+                keepAliveDelay: 100
+            });
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                let clientEventsStream = server.getAuthClients()[0]._eventStream;
+                clientEventsStream.on('amiAction', action => {
+                    console.log(action);
+                    if(action.Action === 'Ping'){
+                        assert.ok(action.ActionID.startsWith('--spec_'));
+                        clientEventsStream.removeAllListeners('amiAction');
+                        done();
+                    }
+                });
             });
         });
 
