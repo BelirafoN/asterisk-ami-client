@@ -16,6 +16,7 @@ const USERNAME = 'test';
 const SECRET = 'test';
 
 let serverOptions = {
+        silent: true,
         credentials: {
             username: USERNAME,
             secret: SECRET
@@ -50,7 +51,7 @@ describe('Ami Client internal functionality', function(){
         beforeEach(done => {
             client = new AmiClient();
             server = new AmiTestServer(serverOptions);
-            server.listen({port: socketOptions.port}).then(done);
+            server.listen(socketOptions).then(done);
         });
 
         it('Connect with correct credentials', done => {
@@ -86,7 +87,7 @@ describe('Ami Client internal functionality', function(){
             });
             client.connect(USERNAME, SECRET, socketOptions).then(() => done());
             setTimeout(() => {
-                server.listen({port: socketOptions.port});
+                server.listen(socketOptions);
             }, 1500);
         });
 
@@ -100,7 +101,7 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
             setTimeout(() => {
-                server.listen({port: socketOptions.port});
+                server.listen(socketOptions);
             }, 1500);
         });
 
@@ -115,7 +116,7 @@ describe('Ami Client internal functionality', function(){
                 done();
             });
             setTimeout(() => {
-                server.listen({port: socketOptions.port});
+                server.listen(socketOptions);
             }, 1500);
         });
 
@@ -149,11 +150,11 @@ describe('Ami Client internal functionality', function(){
                     }
                 });
 
-            server.listen({port: socketOptions.port}).then(() => {
+            server.listen(socketOptions).then(() => {
                 client.connect(USERNAME, SECRET, socketOptions).then(() => {
                     server.close();
                     setTimeout(() => {
-                        server.listen({port: socketOptions.port});
+                        server.listen(socketOptions);
                     }, 1000);
                 });
             });
@@ -165,7 +166,7 @@ describe('Ami Client internal functionality', function(){
         beforeEach(done => {
             client = new AmiClient();
             server = new AmiTestServer(serverOptions);
-            server.listen({port: socketOptions.port}).then(done);
+            server.listen(socketOptions).then(done);
         });
 
         it('Get last Event after event', done => {
@@ -242,7 +243,7 @@ describe('Ami Client internal functionality', function(){
         beforeEach(done => {
             client = new AmiClient({});
             server = new AmiTestServer(serverOptions);
-            server.listen({port: socketOptions.port}).then(done);
+            server.listen(socketOptions).then(done);
         });
 
         it('Connect event', done => {
@@ -341,7 +342,7 @@ describe('Ami Client internal functionality', function(){
         beforeEach(done => {
             client = new AmiClient({});
             server = new AmiTestServer(serverOptions);
-            server.listen({port: socketOptions.port}).then(done);
+            server.listen(socketOptions).then(done);
         });
 
         it('Call action before connection => exception', () => {
@@ -419,8 +420,10 @@ describe('Ami Client internal functionality', function(){
 
     describe('Client\'s configuration', function(){
 
-        beforeEach(() => {
+        beforeEach(done => {
             client = new AmiClient({});
+            server = new AmiTestServer(serverOptions);
+            server.listen(socketOptions).then(done);
         });
 
         it('Get all options of client', () => {
@@ -505,6 +508,49 @@ describe('Ami Client internal functionality', function(){
             assert.deepEqual(client.option('eventFilter'), eventNames);
         });
 
+        it('Event not have $time field', done => {
+           client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+               client.on('event', event => {
+                   assert.ok(event.$time === undefined);
+                   done();
+               });
+               server.broadcast(amiUtils.fromObject({Event: 'TestEvent'}));
+           });
+        });
+
+        it('Response not have $time field', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client
+                    .on('response', response => {
+                        assert.ok(response.$time === undefined);
+                        done();
+                    })
+                    .action({Action: 'Ping'});
+            });
+        });
+
+        it('Event has $time field', done => {
+            client = new AmiClient({addTime: true});
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client.once('event', event => {
+                    assert.ok(/^\d{13}$/.test(event.$time));
+                    done();
+                });
+                server.broadcast(amiUtils.fromObject({Event: 'TestEvent'}));
+            });
+        });
+
+        it('Response has $time field', done => {
+            client = new AmiClient({addTime: true});
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client.once('response', response => {
+                    assert.ok(/^\d{13}$/.test(response.$time));
+                    done();
+                })
+                .action({Action: 'Ping'});
+            });
+        });
+
     });
 
     describe('Connection state', function(){
@@ -512,7 +558,7 @@ describe('Ami Client internal functionality', function(){
         beforeEach(done => {
             client = new AmiClient({});
             server = new AmiTestServer(serverOptions);
-            server.listen({port: socketOptions.port}).then(done);
+            server.listen(socketOptions).then(done);
         });
 
         it('State of AmiConnection before connect is "disconnected"', () => {
@@ -554,7 +600,7 @@ describe('Ami Client internal functionality', function(){
         beforeEach(done => {
             client = new AmiClient({});
             server = new AmiTestServer(serverOptions);
-            server.listen({port: socketOptions.port}).then(done);
+            server.listen(socketOptions).then(done);
         });
 
         it('Filter is disabled', done => {
@@ -623,7 +669,7 @@ describe('Ami Client internal functionality', function(){
         beforeEach(done => {
             client = new AmiClient({});
             server = new AmiTestServer(serverOptions);
-            server.listen({port: socketOptions.port}).then(done);
+            server.listen(socketOptions).then(done);
         });
 
         it('keep-alive is disabled', done => {
