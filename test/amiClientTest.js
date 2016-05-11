@@ -418,8 +418,8 @@ describe('Ami Client internal functionality', function(){
 
         it('Last response not have $time field after resolving promissabled action without ActionID', done => {
             client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
-                client.action({Action: 'Ping'}, true).then(response => {
-                    assert.ok(response.$time === undefined);
+                client.action({Action: 'Ping'}, true).then(() => {
+                    assert.ok(client.lastResponse.$time === undefined);
                     done();
                 });
             });
