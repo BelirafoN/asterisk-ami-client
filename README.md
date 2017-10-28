@@ -220,6 +220,7 @@ Default values:
     emitEventsByTypes: true,
     eventTypeToLowerCase: false,
     emitResponsesById: true,
+    dontDeleteSpecActionId: false,
     addTime: false,
     eventFilter: null  // filter disabled
 }
@@ -233,6 +234,7 @@ Default values:
 * `emitEventsByTypes` - when is `true`, client will emit events by names. See [example 5](#example-5);
 * `eventTypeToLowerCase` - when is `true`, client will emit events by names in lower case. Uses with `emitEventsByTypes`;
 * `emitResponsesById` - when is `true` and data package of action has ActionID field, client will emit responses by `resp_ActionID`. See [example 5](#example-5);
+* `dontDeleteSpecActionId` - when is `true`, client will not hide generated ActionID field in responses;
 * `addTime` - when is `true`, client will be add into events and responses field `$time` with value equal to ms-timestamp;
 * `eventFilter` - object, array or Set with names of events, which will be ignored by client. 
 
