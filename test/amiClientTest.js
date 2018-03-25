@@ -445,6 +445,7 @@ describe('Ami Client internal functionality', function(){
                 emitEventsByTypes: true,
                 eventTypeToLowerCase: false,
                 emitResponsesById: true,
+                dontDeleteSpecActionId: false,
                 addTime: false,
                 eventFilter: null
             })
@@ -460,6 +461,7 @@ describe('Ami Client internal functionality', function(){
                 emitEventsByTypes: false,
                 eventTypeToLowerCase: true,
                 emitResponsesById: false,
+                dontDeleteSpecActionId: true,
                 addTime: true,
                 eventFilter: new Set(['Dial'])
             };
@@ -559,6 +561,29 @@ describe('Ami Client internal functionality', function(){
                 .action({Action: 'Ping'});
             });
         });
+
+        it('Response have deleted generated ActionID field', done => {
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client
+                    .on('response', response => {
+                        assert.ok(response.ActionID === undefined);
+                        done();
+                    })
+                    .action({Action: 'Ping'});
+            });
+        });
+
+        it('Response has generated ActionID field', done => {
+            client = new AmiClient({dontDeleteSpecActionId: true});
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client.once('response', response => {
+                    assert.ok(/^--spec_\d{13}$/.test(response.ActionID));
+                    done();
+                })
+                .action({Action: 'Ping'});
+            });
+        });
+
 
     });
 
