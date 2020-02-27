@@ -741,5 +741,29 @@ describe('Ami Client internal functionality', function(){
 
     });
 
+    describe('multivalAction', function(){
+
+        beforeEach(done => {
+            client = new AmiClient({});
+            server = new AmiTestServer(serverOptions);
+            server.listen(socketOptions).then(done);
+        });
+
+        it('multivalAction handles multiple headers with the same name', done => {
+            let action = client.multivalAction('MessageSend');
+            action.Variable = 'VAR1=val1';
+            action.Variable = 'VAR2=val2';
+            client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
+                client._connection.write = function(data) {
+                    assert(data.match(/Action: MessageSend/));
+                    assert(data.match(/Variable: VAR1=val1/));
+                    assert(data.match(/Variable: VAR2=val2/));
+                    assert(data.match(/ActionID:/));
+                    done();
+                };
+                client.action(action);
+            });
+        });
+    });
 });
 
