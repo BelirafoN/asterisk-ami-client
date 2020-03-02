@@ -577,7 +577,8 @@ describe('Ami Client internal functionality', function(){
             client = new AmiClient({dontDeleteSpecActionId: true});
             client.connect(USERNAME, SECRET, {port: socketOptions.port}).then(() => {
                 client.once('response', response => {
-                    assert.ok(/^--spec_\d{13}$/.test(response.ActionID));
+                    console.log("actionid = ", response.ActionID);
+                    assert.ok(/^--spec_\d{13}-\d{1,10}$/.test(response.ActionID));
                     done();
                 })
                 .action({Action: 'Ping'});
